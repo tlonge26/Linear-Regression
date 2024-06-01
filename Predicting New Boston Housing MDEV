@@ -1,0 +1,78 @@
+import pandas as pd
+import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, mean_squared_error, r2_score, mean_absolute_error
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+# Read the data into a DataFrame
+data = pd.read_csv('Boston (1).csv')
+
+# Display the DataFrame
+data
+# Check for null values
+null_values = data.isnull().sum()
+
+# Display the result
+print(null_values)
+# Perform descriptive statistics
+descriptive_stats = data.describe()
+
+# Display the descriptive statistics
+print(descriptive_stats)
+#Training of dataset starts here.
+
+# Separate the response variable (MEDV) and feature variables
+X = data.drop(columns='MEDV')  # Features
+y = data['MEDV']              # Response variable
+
+#Train and test splitting of data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 42)
+print(y_test.shape, y_train.shape)
+model = LinearRegression()
+model.fit(X_train, y_train)
+prediction = model.predict(X_test)
+prediction
+#Evaluating our model
+
+mse = mean_squared_error(y_test, prediction)
+r2 = r2_score(y_test, prediction)
+mae = mean_absolute_error(y_test, prediction)
+rmse = mse**0.5
+
+"""mse = They are measures of the difference btw the predicted prices & the actual prices in the dataset.
+Lower values indicate better performance."""
+print(f'the mean squared error is {mse}')
+
+""""r2 is a measure of how well the model fits the data. A value of 1 would mean a perfect fit, while
+a value of 0 means the model doesn't fit the data at all."""
+print(f'the r2 score is {r2}')
+
+"""The mean absolute error is another measure of the difference between the predicted and actual
+prices. It is easier to interpret than mean squared error because it in the same unit as te target
+variables."""
+print(f'the mean absolute error is {mae}')
+
+"""The root mean squared error is used as an evaluation technique to get the square root of the mean
+squared error"""
+print(f' the root mean squared error is {rmse}')
+
+"""The intercept is a constant value in the linear regression model. It represents the predicted
+value when all the features are equal to 0."""
+print(f'the intercept is {model.intercept_}')
+
+"""The coefficient represents the importance of each features in predicting the MDEV values.
+For example, the first coefficient which is -0.113 corresponds to the first feature in the
+dataset. A positive coefficient means that as the values of the features increases, the predicted
+MDEV also increases. A negative coefficient means that as the value of the feature increases, the 
+predicted MDEV decreases."""
+print(f' the coefficients are {model.coef_}')
+plt.scatter(y_test, prediction)
+plt.xlabel("Actual MDEV")
+plt.ylabel("The predicted MDEV")
+plt.title("Actual Versus Predicted MDEV")
+plt.show()
+#Linear regression is used to predict a continuous data
+data.corr()
+sns.set(color_codes = True)
+sns.lmplot(x="CRIM", y= "CRIM", data=data)
